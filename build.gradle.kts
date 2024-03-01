@@ -1,25 +1,13 @@
-import io.gitlab.arturbosch.detekt.Detekt
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_SRC_DIR_KOTLIN
-import io.gitlab.arturbosch.detekt.extensions.DetektExtension.Companion.DEFAULT_TEST_SRC_DIR_KOTLIN
-import java.lang.System.getProperty
-import org.gradle.api.JavaVersion.VERSION_17
-import org.gradle.kotlin.dsl.support.uppercaseFirstChar
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
-import org.jlleitschuh.gradle.ktlint.reporter.ReporterType.SARIF
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("io.gitlab.arturbosch.detekt") version "1.23.5"
     id("org.springframework.boot") version "3.2.3"
-    id("org.jlleitschuh.gradle.ktlint") version "12.1.0"
     id("io.spring.dependency-management") version "1.1.4"
 
-    id("ltd.lulz.plugin.core") version "0.1.0"
+    id("ltd.lulz.plugin.common.library") version "0.1.1"
 
     kotlin("jvm") version "1.9.22"
     kotlin("plugin.spring") version "1.9.22"
-
-    `maven-publish`
 }
 
 dependencies {
@@ -31,86 +19,5 @@ dependencies {
 
 description = "Lulz Ltd Test Library Test Utility"
 group = "ltd.lulz.library"
-version = git.version()
 
-detekt {
-    buildUponDefaultConfig = true
-    basePath = projectDir.path
-    source.from(DEFAULT_SRC_DIR_KOTLIN, DEFAULT_TEST_SRC_DIR_KOTLIN)
-}
-
-java {
-    sourceCompatibility = VERSION_17
-    targetCompatibility = VERSION_17
-    withSourcesJar()
-}
-
-ktlint {
-    verbose = true
-    filter {
-        exclude("**/generated/**")
-        include("**/kotlin/**")
-    }
-    kotlinScriptAdditionalPaths {
-        include(fileTree("scripts/*"))
-    }
-    reporters {
-        reporter(SARIF)
-    }
-}
-
-publishing {
-    repositories {
-        // TODO configuration for publishing packages
-        // maven {
-        //     url = uri("https://")
-        //     credentials {
-        //         username =
-        //         password =
-        //     }
-        // }
-        publications.register("mavenJava", MavenPublication::class) { from(components["java"]) }
-    }
-}
-
-repositories {
-    mavenLocal()
-    mavenCentral()
-}
-
-tasks {
-    withType<BootJar> {
-        enabled = false
-    }
-    withType<Detekt> {
-        reports {
-            html.required = false
-            md.required = false
-            sarif.required = true
-            txt.required = false
-            xml.required = false
-        }
-    }
-    withType<Jar> {
-        manifest.attributes.apply {
-            put("Implementation-Title", project.name.uppercaseFirstChar())
-            put("Implementation-Version", project.version)
-            put("Implementation-Vendor", core.vendor)
-            put("Built-By", getProperty("user.name"))
-            put("Built-Git", "${git.currentBranch()} #${git.currentShortHash()}")
-            put("Built-Gradle", project.gradle.gradleVersion)
-            put("Built-JDK", getProperty("java.version"))
-            put("Built-OS", "${getProperty("os.name")} v${getProperty("os.version")}")
-            put("Built-Time", core.timestamp)
-        }
-    }
-    withType<KotlinCompile> {
-        kotlinOptions {
-            freeCompilerArgs += "-Xjsr305=strict"
-            jvmTarget = "17"
-        }
-    }
-    withType<Test> {
-        useJUnitPlatform()
-    }
-}
+tasks.withType<BootJar> { enabled = false }
