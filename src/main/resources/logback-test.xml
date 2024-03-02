@@ -8,4 +8,5 @@
     <appender-ref ref="STDOUT"/>
   </root>
   <logger level="DEBUG" name="ltd.lulz.library"/>
+  <logger level="TRACE" name="ltd.lulz.test"/>
 </configuration>
