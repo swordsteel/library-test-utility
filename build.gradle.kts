@@ -1,25 +1,24 @@
 import org.springframework.boot.gradle.tasks.bundling.BootJar
 
 plugins {
-    id("org.springframework.boot") version "3.2.3"
-    id("io.spring.dependency-management") version "1.1.4"
+    alias(lulz.plugins.org.springframework.boot)
+    alias(lulz.plugins.io.spring.dependency.management)
 
-    id("ltd.lulz.plugin.common.library") version "0.1.1"
+    alias(lulz.plugins.ltd.lulz.plugin.common.library)
 
-    kotlin("jvm") version "1.9.22"
-    kotlin("plugin.spring") version "1.9.22"
+    alias(lulz.plugins.kotlin.jvm)
+    alias(lulz.plugins.kotlin.spring)
 }
 
 dependencies {
-    implementation("org.jetbrains.kotlin:kotlin-reflect")
-    implementation("org.springframework.boot:spring-boot-starter")
+    implementation(lulz.org.jetbrains.kotlin.reflect)
+    implementation(lulz.org.springframework.spring.boot.starter)
 
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation(lulz.org.junit.jupiter.api)
+    testImplementation(lulz.org.junit.jupiter.params)
+    testImplementation(lulz.org.springframework.spring.boot.starter.test)
 
-    testImplementation("org.junit.jupiter:junit-jupiter-api:5.10.2")
-    testImplementation("org.junit.jupiter:junit-jupiter-params:5.10.2")
-
-    testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine:5.10.2")
+    testRuntimeOnly(lulz.org.junit.platform.launcher)
 }
 
 description = "Lulz Ltd Test Library Test Utility"
